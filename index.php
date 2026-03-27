@@ -9,30 +9,32 @@
 </head>
 
 <?php
-// 1. Sua configuração
-$ticker = "IVVB11";
-$api_token = "ik2fd2kcoDtJ3an4mVTWNy"; // token https://brapi.dev/ 
+// 1. Configuração: Lista de ativos que você deseja
+$ativos = ["IVVB11", "BIVB39","HASH11", "IBIT39","PETR4", "BBAS3", "MXRF11" ,"CPTS11", "XPML11", "HGLG11", "JURO11", "CRAA11", "KNCR11", "BTLG11" ]; 
+$api_token = "ik2fd2kcoDtJ3an4mVTWNy"; 
 
-// 2. Iniciando o cURL (Mais seguro que file_get_contents)
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, "https://brapi.dev/api/quote/{$ticker}?token={$api_token}");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Importante para o Codespaces não barrar o SSL
+$resultados = []; // Array para guardar os dados de cada chamada
 
-$response = curl_exec($ch);
-curl_close($ch);
+// 2. O Loop: Faz uma requisição separada para cada ativo
+foreach ($ativos as $ticker) {
+    $url = "https://brapi.dev/api/quote/{$ticker}?token={$api_token}";
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
 
-// 3. Transformando o texto da API em um Objeto PHP
-$dados = json_decode($response, true);
-
-// 4. Verificando se deu certo antes de exibir
-if (isset($dados['results'][0])) {
-    $info = $dados['results'][0];
-    $preco = $info['regularMarketPrice'];
-    $variacao = $info['regularMarketChangePercent'];
-    $nome = $info['longName'];
-} else {
-    $erro = "Não foi possível carregar os dados. Verifique sua chave API.";
+    // 3. Verifica se a resposta foi válida (Código 200) e guarda no array
+    if ($http_code == 200) {
+        $dados_temp = json_decode($response, true);
+        if (isset($dados_temp['results'][0])) {
+            $resultados[] = $dados_temp['results'][0];
+        }
+    }
 }
 ?>
 
@@ -63,48 +65,38 @@ if (isset($dados['results'][0])) {
 
     <div class="mt-4">
         <h4>Atualizações</h4>
+        <?php if (!empty($resultados)): ?>
         <table class="table table-hover bg-white shadow-sm">
             <thead class="table-dark">
-                <tr>
-                    <th>Data</th>
+                <tr style="background-color: #f2f2f2;">
                     <th>Ativo</th>
-                    <th>Valor</th>
+                    <th>Nome</th>
+                    <th>Preço</th>
+                    <th>Variação</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td><?php echo date('d/m/Y H:i:s'); ?></td>
-                    <td><?php echo "$ticker"?></td>
-                    <td>R$ <?php echo number_format($preco, 2, ',', '.'); ?></td>
-                </tr>
-                <tr>
-                    <td>27/03/2026</td>
-                    <td>HASH11</td>
-                    <td>R$ 50,00</td>
-                </tr>
-            </tbody>
+                <?php foreach ($resultados as $info): ?>
+                    <tr>
+                        <td><strong><?php echo $info['symbol']; ?></strong></td>
+                        <td><?php echo $info['longName'] ?? 'N/A'; ?></td>
+                        <td>R$ <?php echo number_format($info['regularMarketPrice'], 2, ',', '.'); ?></td>
+                        <td style="color: <?php echo $info['regularMarketChangePercent'] >= 0 ? 'green' : 'red'; ?>">
+                            <?php echo number_format($info['regularMarketChangePercent'], 2, ',', '.'); ?>%
+                        </td>
+                    </tr>
+            <?php endforeach; ?>
         </table>
+    <?php else: ?>
+        <p>Nenhum dado encontrado. Verifique sua conexão ou o limite da API.</p>
+    <?php endif; ?>
     </div>
 </div>
 
-<div class="container mt-5">
-        <?php if(isset($erro)): ?>
-            <div class="alert alert-danger"><?php echo $erro; ?></div>
-        <?php else: ?>
-            <div class="card shadow" style="width: 25rem;">
-                <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted"><?php echo $nome; ?></h6>
-                    <h1 class="card-title">R$ <?php echo number_format($preco, 2, ',', '.'); ?></h1>
-                    <span class="badge <?php echo $variacao >= 0 ? 'bg-success' : 'bg-danger'; ?>">
-                        <?php echo number_format($variacao, 2, ',', '.') . '%'; ?>
-                    </span>
-                    <p class="text-muted mt-3" style="font-size: 0.8rem;">
-                        Atualizado em: <?php echo date('d/m/Y H:i:s'); ?>
-                    </p>
-                </div>
-            </div>
-        <?php endif; ?>
-    </div>
+
+    
+</body>
+</html>
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,5 +1,5 @@
 php -S localhost:8080 
 
 git add .
-git commit -m "meu primeiro envio"
+git commit -m "mensagem"
 git push

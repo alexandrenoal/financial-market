@@ -1,8 +1,8 @@
 <?php
-// funcoes.php
 
 // functions.php
 
+// Função de consulta do valor das cotações
 function buscarCotacoes(array $ativos, string $api_token): array {
     $resultados = [];
 

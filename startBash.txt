@@ -1,5 +1,12 @@
 php -S localhost:8080 
 
+---------------------------
+
 git add .
 git commit -m "mensagem"
 git push
+
+---------------------------
+
+Instalar MYSQL:
+sudo apt-get install -y phpmyadmin

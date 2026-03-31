@@ -1,6 +1,8 @@
 {
-	"name": "PHP Environment",
-	"image": "mcr.microsoft.com/devcontainers/php:8.3",
+	"name": "finance-market",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -9,5 +11,5 @@
 			]
 		}
 	},
-	"forwardPorts": [8000]
+	"forwardPorts": [8000, 8080, 3306]
 }

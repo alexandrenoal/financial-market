@@ -1,0 +1,13 @@
+{
+	"name": "PHP Environment",
+	"image": "mcr.microsoft.com/devcontainers/php:8.3",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"bmewburn.vscode-intelephense-client",
+				"xdebug.php-debug"
+			]
+		}
+	},
+	"forwardPorts": [8000]
+}

@@ -1,3 +1,25 @@
+Configurar PHP no codespace
+
+Criar a seguinte pasta:
+.devcontainer/
+    Criar o seguinte arquivo dentro da pasta
+    devcontainer.json
+
+    Colar o codigo abaixo
+    {
+	"name": "PHP Environment",
+	"image": "mcr.microsoft.com/devcontainers/php:8.3",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"bmewburn.vscode-intelephense-client",
+				"xdebug.php-debug"
+			]
+		}
+	},
+	"forwardPorts": [8000]
+}
+
 php -S localhost:8080 
 
 ---------------------------
@@ -8,5 +30,3 @@ git push
 
 ---------------------------
 
-Instalar MYSQL:
-sudo apt-get install -y phpmyadmin

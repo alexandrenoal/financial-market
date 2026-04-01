@@ -29,25 +29,45 @@ function buscarCotacoes(array $ativos, string $api_token): array {
     return $resultados; // <-- retorna em vez de depender de variável global
 }
 
-// Sua chave da API
+// Consulta de ativo
 $token = "ik2fd2kcoDtJ3an4mVTWNy";
 
-// Verifica se o usuário pesquisou algo
 if (isset($_GET['ticker'])) {
-    $ativo = strtoupper(trim($_GET['ticker'])); // Limpa e coloca em maiúsculo
+    $ativo = strtoupper(trim($_GET['ticker'])); 
     
-    // URL da Brapi para um único ativo
     $url = "https://brapi.dev/api/quote/{$ativo}?token={$token}";
-
-    // Faz a requisição (usando file_get_contents ou cURL)
-    $response = file_get_contents($url);
+    $response = @file_get_contents($url); // O @ evita exibir erro caso a API falhe
     $dados = json_decode($response, true);
 
     if (isset($dados['results'][0])) {
         $resultado = $dados['results'][0];
+        
+        // Exibe os dados de texto
         echo "<h5>Resultado para: " . $resultado['symbol'] . "</h5>";
         echo "Preço Atual: R$ " . $resultado['regularMarketPrice'];
         echo "<br>Variação: " . $resultado['regularMarketChangePercent'] . "%";
+
+        // --- INÍCIO DO CÓDIGO DO GRÁFICO ---
+        echo '
+        <div id="tradingview_chart" style="height: 400px; margin-top: 20px;"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+        <script type="text/javascript">
+          new TradingView.widget({
+            "autosize": true,
+            "symbol": "BMFBOVESPA:' . $ativo . '",
+            "interval": "D",
+            "timezone": "America/Sao_Paulo",
+            "theme": "light",
+            "style": "1",
+            "locale": "br",
+            "toolbar_bg": "#f1f3f6",
+            "enable_publishing": false,
+            "allow_symbol_change": true,
+            "container_id": "tradingview_chart"
+          });
+        </script>';
+        // --- FIM DO CÓDIGO DO GRÁFICO ---
+
     } else {
         echo "<p>Ativo não encontrado. Verifique o código e tente novamente.</p>";
     }

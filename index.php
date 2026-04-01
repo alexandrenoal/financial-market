@@ -20,6 +20,11 @@
             $resultados = buscarCotacoes($ativos, $api_token); // chama a função
         ?>
 
+        <form method="GET" action="">
+            <input type="text" name="ticker" placeholder="Ex: HASH11" required>
+            <button type="submit">Consultar Ativo</button>
+        </form>
+
         <h4>Cotações</h4>
 
         <table class="table table-hover bg-white shadow-sm">

@@ -1,14 +1,10 @@
 Configurar PHP no codespace
 
-Criar a seguinte pasta:
-.devcontainer/
-    Criar o seguinte arquivo dentro da pasta
-    devcontainer.json
-
-    Colar o codigo abaixo
-    {
-	"name": "PHP Environment",
-	"image": "mcr.microsoft.com/devcontainers/php:8.3",
+{
+	"name": "finance-market",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -17,10 +13,12 @@ Criar a seguinte pasta:
 			]
 		}
 	},
-	"forwardPorts": [8000]
+	"forwardPorts": [8000, 8080, 3306]
 }
 
-php -S localhost:8080 
+---------------------------
+
+php -S localhost:8000
 
 ---------------------------
 
@@ -30,3 +28,4 @@ git push
 
 ---------------------------
 
+teste
